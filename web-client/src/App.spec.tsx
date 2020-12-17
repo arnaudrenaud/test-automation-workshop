@@ -24,6 +24,13 @@ const GET_WILDERS_SUCCESS_MOCK = {
   },
 };
 
+const GET_WILDERS_ERROR_MOCK = {
+  request: {
+    query: GET_WILDERS,
+  },
+  error: new Error('Unable to reach server.'),
+};
+
 describe('App', () => {
   describe('while fetching wilders', () => {
     it('renders loading', () => {
@@ -37,8 +44,20 @@ describe('App', () => {
     });
   });
 
-  describe('when fetching wilders failed', () => {
-    it('renders error', () => {});
+  describe('when unable to reach server', () => {
+    it('renders error', async () => {
+      render(
+        <MockedProvider mocks={[GET_WILDERS_ERROR_MOCK]} addTypename={false}>
+          <App />
+        </MockedProvider>
+      );
+
+      const errorMessage = await waitFor(() =>
+        screen.getByText('Erreur de chargement.')
+      );
+
+      expect(errorMessage).toBeInTheDocument();
+    });
   });
 
   describe('when fetching wilders succeeded', () => {
